@@ -1,7 +1,6 @@
 require 'rubygems'
 require 'sinatra'
 require 'gruff'
-require 'json'
 
 CHARTS = {
    'bar'  => Gruff::Bar,
