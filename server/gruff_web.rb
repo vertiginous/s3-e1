@@ -1,6 +1,7 @@
 require 'rubygems'
 require 'sinatra'
 require 'gruff'
+require 'json'
 
 CHARTS = {
    'bar'  => Gruff::Bar,
@@ -9,7 +10,7 @@ CHARTS = {
 }
 
 get '/gruff/:chart.png' do
-  chart_type = CHARTS[params[:chart]]
+  chart_type = CHARTS[ params[:chart] ]
   pass unless chart_type
   halt 500, 'you must include data points' unless params[:data]
   
@@ -17,9 +18,9 @@ get '/gruff/:chart.png' do
   gruff.title = params[:title]
   gruff.send( "theme_#{params[:theme]}" ) if params[:theme]
   
-  params[:data].each{|name,points|
-    gruff.data(name, points.map{|i| i.to_i })
-  }
+  JSON.parse( params[:data] ).each do |name,points|
+    gruff.data( name, points.map{|i| i.to_i } )
+  end
 
   content_type :png
   gruff.to_blob
